@@ -7,7 +7,7 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            max-width: 600px;
+            max-width: 800px;
             margin: 20px auto;
             padding: 20px;
             background-color: #f0f0f0;
@@ -43,70 +43,78 @@
         }
         .results {
             margin-top: 20px;
+        }
+        .section {
+            margin-bottom: 20px;
             padding: 15px;
             background-color: #e8f5e9;
             border-radius: 5px;
         }
-        .section {
-            margin-bottom: 20px;
-        }
         .section h3 {
+            margin-top: 0;
             margin-bottom: 10px;
             color: #333;
+        }
+        .error {
+            color: red;
+            margin-top: 10px;
         }
     </style>
 </head>
 <body>
     <div class="calculator">
-        <h2>Polish Pizza Dough Calculator</h2>
-        
+        <h2>Poolish Pizza Dough Calculator</h2>
         <div class="input-group">
             <label>Number of pizza balls:</label>
             <input type="number" id="balls" value="4" min="1">
         </div>
-        
         <div class="input-group">
             <label>Weight per ball (grams):</label>
-            <input type="number" id="ballWeight" value="250" min="1">
+            <input type="number" id="ballWeight" value="200" min="1">
         </div>
-        
         <div class="input-group">
             <label>Hydration (%):</label>
-            <input type="number" id="hydration" value="60" step="0.1">
+            <input type="number" id="hydration" value="65" step="2.5" min="0">
         </div>
-        
         <div class="input-group">
             <label>Salt (%):</label>
-            <input type="number" id="salt" value="2" step="0.1">
+            <input type="number" id="salt" value="2" step="0.1" min="0">
+        </div>
+        <div class="input-group">
+            <label>Poolish percentage (%):</label>
+            <input type="number" id="polishPercent" value="30" step="1" min="0">
         </div>
         
-        <div class="input-group">
-            <label>Polish percentage (%):</label>
-            <input type="number" id="polishPercent" value="30" step="0.1">
-        </div>
-
         <button onclick="calculate()">Calculate</button>
-
-        <div class="results">
-            <h3>Total Dough Weight: <span id="totalDoughWeight">0</span> g</h3>
-
+        
+        <div id="errorMessages" class="error"></div>
+        
+        <div class="results" id="results" style="display: none;">
             <div class="section">
-                <h3>Polish Starter Ingredients:</h3>
-                <p>Flour for polish: <span id="polishFlour">0</span> g</p>
-                <p>Water for polish: <span id="polishWater">0</span> g</p>
-                <p><strong>Total polish starter: <span id="totalPolish">0</span> g</strong></p>
+                <h3>Recipe Summary</h3>
+                <p>Total Dough: <span id="totalDoughWeight">0</span> g</p>
+                <p>Total Flour: <span id="totalFlour">0</span> g</p>
+                <p>Total Water: <span id="totalWater">0</span> g</p>
+                <p>Total Salt: <span id="saltResult">0</span> g</p>
             </div>
-
+            
             <div class="section">
-                <h3>Final Dough Ingredients:</h3>
+                <h3>Poolish Ingredients</h3>
+                <p>Flour for poolish: <span id="polishFlour">0</span> g</p>
+                <p>Water for poolish: <span id="polishWater">0</span> g</p>
+                <p><strong>Total poolish: <span id="totalPolish">0</span> g</strong></p>
+            </div>
+            
+            <div class="section">
+                <h3>Final Dough Ingredients</h3>
                 <p>Fresh flour: <span id="freshFlour">0</span> g</p>
                 <p>Additional water: <span id="additionalWater">0</span> g</p>
-                <p>Salt: <span id="saltResult">0</span> g</p>
-                <p><strong>Polish starter (from above): <span id="polishStarterFinal">0</span> g</strong></p>
+                <p>Salt: <span id="saltResultFinal">0</span> g</p>
+                <p><strong>Poolish (from above): <span id="polishStarterFinal">0</span> g</strong></p>
             </div>
         </div>
     </div>
-
+    
     <script>
         function calculate() {
             const balls = parseFloat(document.getElementById('balls').value);
@@ -114,30 +122,71 @@
             const hydration = parseFloat(document.getElementById('hydration').value) / 100;
             const saltPercentage = parseFloat(document.getElementById('salt').value) / 100;
             const polishPercent = parseFloat(document.getElementById('polishPercent').value) / 100;
+            
+            let errorMessages = [];
 
+            // Error checks
+            if (balls <= 0 || ballWeight <= 0 || hydration <= 0 || saltPercentage <= 0 || polishPercent <= 0) {
+                errorMessages.push("All values must be positive.");
+            }
+            
+            if (polishPercent > hydration) {
+                errorMessages.push("Poolish percentage cannot exceed hydration percentage.");
+            }
+            
             const totalDough = balls * ballWeight;
+            if (totalDough > 2000) {
+                errorMessages.push("Total dough weight cannot exceed 2000g.");
+            }
+            
+            if (hydration > 1) {
+                errorMessages.push("Hydration cannot exceed 100%.");
+            }
+            
+            if (saltPercentage > 0.1) {
+                errorMessages.push("Salt percentage is unusually high (>10%). Please check your input.");
+            }
+            
+            if (polishPercent > 1) {
+                errorMessages.push("Poolish percentage cannot exceed 100%.");
+            }
 
+            // Display errors or calculate
+            if (errorMessages.length > 0) {
+                document.getElementById('errorMessages').innerHTML = errorMessages.join("<br>");
+                document.getElementById('results').style.display = 'none';
+                return;
+            } else {
+                document.getElementById('errorMessages').innerHTML = "";
+                document.getElementById('results').style.display = 'block';
+            }
+            
             const totalFlour = totalDough / (1 + hydration + saltPercentage);
-
+            const totalWater = totalFlour * hydration;
+            const salt = totalFlour * saltPercentage;
+            
             const polishFlour = totalFlour * polishPercent;
             const polishWater = polishFlour; // 100% hydration
             const totalPolish = polishFlour + polishWater;
-
+            
             const freshFlour = totalFlour - polishFlour;
-            const totalWater = totalFlour * hydration;
             const additionalWater = totalWater - polishWater;
-            const salt = totalFlour * saltPercentage;
-
+            
             document.getElementById('totalDoughWeight').textContent = Math.round(totalDough);
+            document.getElementById('totalFlour').textContent = Math.round(totalFlour);
+            document.getElementById('totalWater').textContent = Math.round(totalWater);
+            document.getElementById('saltResult').textContent = Math.round(salt);
+            
             document.getElementById('polishFlour').textContent = Math.round(polishFlour);
             document.getElementById('polishWater').textContent = Math.round(polishWater);
             document.getElementById('totalPolish').textContent = Math.round(totalPolish);
+            
             document.getElementById('freshFlour').textContent = Math.round(freshFlour);
             document.getElementById('additionalWater').textContent = Math.round(additionalWater);
-            document.getElementById('saltResult').textContent = Math.round(salt);
+            document.getElementById('saltResultFinal').textContent = Math.round(salt);
             document.getElementById('polishStarterFinal').textContent = Math.round(totalPolish);
         }
-
+        
         calculate();
     </script>
 </body>
