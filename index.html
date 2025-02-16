@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,24 +13,51 @@
             padding: 20px;
             background-color: #f0f0f0;
         }
+
         .calculator {
             background-color: white;
             padding: 20px;
             border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
+
         .input-group {
             margin-bottom: 15px;
         }
+
         label {
             display: inline-block;
             width: 200px;
             margin-right: 10px;
         }
+
         input {
             width: 100px;
             padding: 5px;
         }
+
+        .results {
+            margin-top: 20px;
+        }
+
+        .section {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #e8f5e9;
+            border-radius: 5px;
+        }
+
+        .section h3 {
+            margin-top: 0;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .error {
+            color: red;
+            margin-top: 10px;
+        }
+
         button {
             background-color: #4CAF50;
             color: white;
@@ -37,30 +65,15 @@
             border: none;
             border-radius: 5px;
             cursor: pointer;
+            margin-top: 10px;
         }
+
         button:hover {
             background-color: #45a049;
         }
-        .results {
-            margin-top: 20px;
-        }
-        .section {
-            margin-bottom: 20px;
-            padding: 15px;
-            background-color: #e8f5e9;
-            border-radius: 5px;
-        }
-        .section h3 {
-            margin-top: 0;
-            margin-bottom: 10px;
-            color: #333;
-        }
-        .error {
-            color: red;
-            margin-top: 10px;
-        }
     </style>
 </head>
+
 <body>
     <div class="calculator">
         <h2>Poolish Pizza Dough Calculator</h2>
@@ -78,33 +91,30 @@
         </div>
         <div class="input-group">
             <label>Salt (%):</label>
-            <input type="number" id="salt" value="2" step="0.1" min="0">
+            <input type="number" id="salt" value="2.5" step="0.1" min="0">
         </div>
         <div class="input-group">
             <label>Poolish percentage (%):</label>
             <input type="number" id="polishPercent" value="30" step="1" min="0">
         </div>
-        
-        <button onclick="calculate()">Calculate</button>
-        
+        <button onclick="shareOrSave()">Share or Save</button>
         <div id="errorMessages" class="error"></div>
-        
-        <div class="results" id="results" style="display: none;">
+        <div class="results" id="results">
             <div class="section">
                 <h3>Recipe Summary</h3>
                 <p>Total Dough: <span id="totalDoughWeight">0</span> g</p>
                 <p>Total Flour: <span id="totalFlour">0</span> g</p>
                 <p>Total Water: <span id="totalWater">0</span> g</p>
                 <p>Total Salt: <span id="saltResult">0</span> g</p>
+                <p>Dry Yeast: <span id="dryYeast">0</span> g</p>
             </div>
-            
             <div class="section">
                 <h3>Poolish Ingredients</h3>
                 <p>Flour for poolish: <span id="polishFlour">0</span> g</p>
                 <p>Water for poolish: <span id="polishWater">0</span> g</p>
+                <p>Dry Yeast for poolish: <span id="polishYeast">0</span> g</p>
                 <p><strong>Total poolish: <span id="totalPolish">0</span> g</strong></p>
             </div>
-            
             <div class="section">
                 <h3>Final Dough Ingredients</h3>
                 <p>Fresh flour: <span id="freshFlour">0</span> g</p>
@@ -114,7 +124,6 @@
             </div>
         </div>
     </div>
-    
     <script>
         function calculate() {
             const balls = parseFloat(document.getElementById('balls').value);
@@ -122,36 +131,28 @@
             const hydration = parseFloat(document.getElementById('hydration').value) / 100;
             const saltPercentage = parseFloat(document.getElementById('salt').value) / 100;
             const polishPercent = parseFloat(document.getElementById('polishPercent').value) / 100;
-            
             let errorMessages = [];
 
-            // Error checks
             if (balls <= 0 || ballWeight <= 0 || hydration <= 0 || saltPercentage <= 0 || polishPercent <= 0) {
                 errorMessages.push("All values must be positive.");
             }
-            
             if (polishPercent > hydration) {
                 errorMessages.push("Poolish percentage cannot exceed hydration percentage.");
             }
-            
             const totalDough = balls * ballWeight;
             if (totalDough > 2000) {
                 errorMessages.push("Total dough weight cannot exceed 2000g.");
             }
-            
             if (hydration > 1) {
                 errorMessages.push("Hydration cannot exceed 100%.");
             }
-            
             if (saltPercentage > 0.1) {
                 errorMessages.push("Salt percentage is unusually high (>10%). Please check your input.");
             }
-            
             if (polishPercent > 1) {
                 errorMessages.push("Poolish percentage cannot exceed 100%.");
             }
 
-            // Display errors or calculate
             if (errorMessages.length > 0) {
                 document.getElementById('errorMessages').innerHTML = errorMessages.join("<br>");
                 document.getElementById('results').style.display = 'none';
@@ -160,34 +161,72 @@
                 document.getElementById('errorMessages').innerHTML = "";
                 document.getElementById('results').style.display = 'block';
             }
-            
+
             const totalFlour = totalDough / (1 + hydration + saltPercentage);
             const totalWater = totalFlour * hydration;
             const salt = totalFlour * saltPercentage;
-            
             const polishFlour = totalFlour * polishPercent;
-            const polishWater = polishFlour; // 100% hydration
+            const polishWater = polishFlour;
             const totalPolish = polishFlour + polishWater;
-            
             const freshFlour = totalFlour - polishFlour;
             const additionalWater = totalWater - polishWater;
-            
+
+            const dryYeast = (totalPolish / 300) * 3;
+            const polishYeast = dryYeast;
+
             document.getElementById('totalDoughWeight').textContent = Math.round(totalDough);
             document.getElementById('totalFlour').textContent = Math.round(totalFlour);
             document.getElementById('totalWater').textContent = Math.round(totalWater);
             document.getElementById('saltResult').textContent = Math.round(salt);
-            
+            document.getElementById('dryYeast').textContent = dryYeast.toFixed(1);
             document.getElementById('polishFlour').textContent = Math.round(polishFlour);
             document.getElementById('polishWater').textContent = Math.round(polishWater);
+            document.getElementById('polishYeast').textContent = polishYeast.toFixed(1);
             document.getElementById('totalPolish').textContent = Math.round(totalPolish);
-            
             document.getElementById('freshFlour').textContent = Math.round(freshFlour);
             document.getElementById('additionalWater').textContent = Math.round(additionalWater);
             document.getElementById('saltResultFinal').textContent = Math.round(salt);
             document.getElementById('polishStarterFinal').textContent = Math.round(totalPolish);
+
+            updateURL();
         }
-        
-        calculate();
+
+        function updateURL() {
+            const inputs = ['balls', 'ballWeight', 'hydration', 'salt', 'polishPercent'];
+            const url = new URL(window.location.href);
+            inputs.forEach(id => {
+                url.searchParams.set(id, document.getElementById(id).value);
+            });
+            history.replaceState(null, '', url);
+        }
+
+        function loadFromUrl() {
+            const inputs = ['balls', 'ballWeight', 'hydration', 'salt', 'polishPercent'];
+            const url = new URL(window.location.href);
+            inputs.forEach(id => {
+                const value = url.searchParams.get(id);
+                if (value) document.getElementById(id).value = value;
+            });
+            calculate();
+        }
+
+        function shareOrSave() {
+            const url = window.location.href;
+            navigator.clipboard.writeText(url).then(() => {
+                alert('URL copied to clipboard!');
+            }).catch(err => {
+                console.error('Failed to copy URL: ', err);
+                alert('Failed to copy URL. Please copy it manually:\n\n' + url);
+            });
+        }
+
+        const inputs = document.querySelectorAll('input');
+        inputs.forEach(input => {
+            input.addEventListener('input', calculate);
+        });
+
+        loadFromUrl();
     </script>
 </body>
+
 </html>
