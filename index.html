@@ -31,7 +31,8 @@
             margin-right: 10px;
         }
 
-        input {
+        input,
+        select {
             width: 100px;
             padding: 5px;
         }
@@ -71,6 +72,31 @@
         button:hover {
             background-color: #45a049;
         }
+
+        .button-group {
+            display: inline-block;
+        }
+
+        .poolish-type-btn {
+            background-color: #f0f0f0;
+            border: 1px solid #ccc;
+            padding: 5px 10px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .poolish-type-btn:first-child {
+            border-radius: 5px 0 0 5px;
+        }
+
+        .poolish-type-btn:last-child {
+            border-radius: 0 5px 5px 0;
+        }
+
+        .poolish-type-btn.active {
+            background-color: #4CAF50;
+            color: white;
+        }
     </style>
 </head>
 
@@ -94,10 +120,23 @@
             <input type="number" id="salt" value="2.5" step="0.1" min="0">
         </div>
         <div class="input-group">
-            <label>Poolish percentage (%):</label>
-            <input type="number" id="polishPercent" value="30" step="1" min="0">
+            <label>Poolish input type:</label>
+            <div class="button-group">
+                <button id="percentButton" class="poolish-type-btn"
+                    onclick="setPoolishType('percent')">Percentage</button>
+                <button id="amountButton" class="poolish-type-btn active"
+                    onclick="setPoolishType('amount')">Amount</button>
+            </div>
         </div>
-        <button onclick="shareOrSave()">Share or Save</button>
+        <div class="input-group" id="poolishPercentGroup" style="display:none;">
+            <label>Poolish percentage (%):</label>
+            <input type="number" id="poolishPercent" value="30" step="1" min="0">
+        </div>
+        <div class="input-group" id="poolishAmountGroup">
+            <label>Poolish amount (g):</label>
+            <input type="number" id="poolishAmount" value="300" step="1" min="0">
+        </div>
+        <button onclick="shareOrSave()">Copy recipe to clipboard</button>
         <div id="errorMessages" class="error"></div>
         <div class="results" id="results">
             <div class="section">
@@ -110,27 +149,50 @@
             </div>
             <div class="section">
                 <h3>Poolish Ingredients</h3>
-                <p>Flour for poolish: <span id="polishFlour">0</span> g</p>
-                <p>Water for poolish: <span id="polishWater">0</span> g</p>
-                <p>Dry Yeast for poolish: <span id="polishYeast">0</span> g</p>
+                <p>Flour: <span id="polishFlour">0</span> g</p>
+                <p>Water: <span id="polishWater">0</span> g</p>
+                <p>Dry Yeast: <span id="polishYeast">0</span> g</p>
                 <p><strong>Total poolish: <span id="totalPolish">0</span> g</strong></p>
             </div>
             <div class="section">
                 <h3>Final Dough Ingredients</h3>
-                <p>Fresh flour: <span id="freshFlour">0</span> g</p>
-                <p>Additional water: <span id="additionalWater">0</span> g</p>
+                <p>Flour: <span id="freshFlour">0</span> g</p>
+                <p>Water: <span id="additionalWater">0</span> g</p>
                 <p>Salt: <span id="saltResultFinal">0</span> g</p>
                 <p><strong>Poolish (from above): <span id="polishStarterFinal">0</span> g</strong></p>
             </div>
         </div>
     </div>
     <script>
+        function setPoolishType(type) {
+            document.getElementById('percentButton').classList.toggle('active', type === 'percent');
+            document.getElementById('amountButton').classList.toggle('active', type === 'amount');
+            document.getElementById('poolishPercentGroup').style.display = type === 'percent' ? 'block' : 'none';
+            document.getElementById('poolishAmountGroup').style.display = type === 'amount' ? 'block' : 'none';
+            calculate();
+        }
+
         function calculate() {
             const balls = parseFloat(document.getElementById('balls').value);
             const ballWeight = parseFloat(document.getElementById('ballWeight').value);
             const hydration = parseFloat(document.getElementById('hydration').value) / 100;
             const saltPercentage = parseFloat(document.getElementById('salt').value) / 100;
-            const polishPercent = parseFloat(document.getElementById('polishPercent').value) / 100;
+            const inputType = document.getElementById('percentButton').classList.contains('active') ? 'percent' : 'amount';
+
+            let polishPercent, totalPolish;
+
+            const totalDough = balls * ballWeight;
+            const totalFlour = totalDough / (1 + hydration + saltPercentage);
+            const totalWater = totalFlour * hydration;
+
+            if (inputType === 'percent') {
+                polishPercent = parseFloat(document.getElementById('poolishPercent').value) / 100;
+                totalPolish = totalFlour * polishPercent * 2; // Flour + Water
+            } else {
+                totalPolish = parseFloat(document.getElementById('poolishAmount').value);
+                polishPercent = totalPolish / (totalFlour * 2);
+            }
+
             let errorMessages = [];
 
             if (balls <= 0 || ballWeight <= 0 || hydration <= 0 || saltPercentage <= 0 || polishPercent <= 0) {
@@ -139,7 +201,6 @@
             if (polishPercent > hydration) {
                 errorMessages.push("Poolish percentage cannot exceed hydration percentage.");
             }
-            const totalDough = balls * ballWeight;
             if (totalDough > 2000) {
                 errorMessages.push("Total dough weight cannot exceed 2000g.");
             }
@@ -162,12 +223,9 @@
                 document.getElementById('results').style.display = 'block';
             }
 
-            const totalFlour = totalDough / (1 + hydration + saltPercentage);
-            const totalWater = totalFlour * hydration;
             const salt = totalFlour * saltPercentage;
-            const polishFlour = totalFlour * polishPercent;
-            const polishWater = polishFlour;
-            const totalPolish = polishFlour + polishWater;
+            const polishFlour = totalPolish / 2;
+            const polishWater = totalPolish / 2;
             const freshFlour = totalFlour - polishFlour;
             const additionalWater = totalWater - polishWater;
 
@@ -192,22 +250,27 @@
         }
 
         function updateURL() {
-            const inputs = ['balls', 'ballWeight', 'hydration', 'salt', 'polishPercent'];
+            const inputs = ['balls', 'ballWeight', 'hydration', 'salt'];
             const url = new URL(window.location.href);
             inputs.forEach(id => {
                 url.searchParams.set(id, document.getElementById(id).value);
             });
+            const inputType = document.getElementById('percentButton').classList.contains('active') ? 'percent' : 'amount';
+            url.searchParams.set('poolishInputType', inputType);
+            url.searchParams.set(inputType === 'percent' ? 'poolishPercent' : 'poolishAmount',
+                document.getElementById(inputType === 'percent' ? 'poolishPercent' : 'poolishAmount').value);
             history.replaceState(null, '', url);
         }
 
         function loadFromUrl() {
-            const inputs = ['balls', 'ballWeight', 'hydration', 'salt', 'polishPercent'];
+            const inputs = ['balls', 'ballWeight', 'hydration', 'salt', 'poolishPercent', 'poolishAmount'];
             const url = new URL(window.location.href);
             inputs.forEach(id => {
                 const value = url.searchParams.get(id);
                 if (value) document.getElementById(id).value = value;
             });
-            calculate();
+            const poolishType = url.searchParams.get('poolishInputType') || 'amount';
+            setPoolishType(poolishType);
         }
 
         function shareOrSave() {
@@ -219,13 +282,15 @@
                 alert('Failed to copy URL. Please copy it manually:\n\n' + url);
             });
         }
+        document.addEventListener('DOMContentLoaded', function () {
+            setPoolishType('amount');
+            loadFromUrl();
+        });
 
         const inputs = document.querySelectorAll('input');
         inputs.forEach(input => {
             input.addEventListener('input', calculate);
         });
-
-        loadFromUrl();
     </script>
 </body>
 
