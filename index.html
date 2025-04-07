@@ -97,6 +97,35 @@
             background-color: #4CAF50;
             color: white;
         }
+        
+        .instructions {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+            border-left: 4px solid #4CAF50;
+        }
+        
+        .instructions h3 {
+            color: #2E7D32;
+            margin-top: 0;
+        }
+        
+        .instructions ol {
+            padding-left: 20px;
+        }
+        
+        .instructions li {
+            margin-bottom: 12px;
+            line-height: 1.5;
+        }
+        
+        .step-heading {
+            font-weight: bold;
+            color: #2E7D32;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
     </style>
 </head>
 
@@ -120,6 +149,10 @@
             <input type="number" id="salt" value="2.5" step="0.1" min="0">
         </div>
         <div class="input-group">
+            <label>Olive Oil (%):</label>
+            <input type="number" id="oliveOil" value="2" step="0.1" min="0" max="3">
+        </div>
+        <div class="input-group">
             <label>Poolish input type:</label>
             <div class="button-group">
                 <button id="percentButton" class="poolish-type-btn"
@@ -140,18 +173,22 @@
         <div id="errorMessages" class="error"></div>
         <div class="results" id="results">
             <div class="section">
-                <h3>Recipe Summary</h3>
-                <p>Total Dough: <span id="totalDoughWeight">0</span> g</p>
-                <p>Total Flour: <span id="totalFlour">0</span> g</p>
-                <p>Total Water: <span id="totalWater">0</span> g</p>
-                <p>Total Salt: <span id="saltResult">0</span> g</p>
+                <h3>Total ingredients</h3>
+                <p>Dough: <span id="totalDoughWeight">0</span> g</p>
+                <p>Flour: <span id="totalFlour">0</span> g</p>
+                <p>Water: <span id="totalWater">0</span> g</p>
+                <p>Salt: <span id="saltResult">0</span> g</p>
+                <p>Olive Oil: <span id="oliveOilResult">0</span> g</p>
                 <p>Dry Yeast: <span id="dryYeast">0</span> g</p>
+                <p>Honey (optional): <span id="honeyResult">0</span> g</p>
+                <p>Poolish Percentage in Dough: <span id="poolishPercentInDough">0</span>%</p>
             </div>
             <div class="section">
                 <h3>Poolish Ingredients</h3>
                 <p>Flour: <span id="polishFlour">0</span> g</p>
                 <p>Water: <span id="polishWater">0</span> g</p>
                 <p>Dry Yeast: <span id="polishYeast">0</span> g</p>
+                <p>Honey (optional): <span id="polishHoney">0</span> g</p>
                 <p><strong>Total poolish: <span id="totalPolish">0</span> g</strong></p>
             </div>
             <div class="section">
@@ -159,7 +196,37 @@
                 <p>Flour: <span id="freshFlour">0</span> g</p>
                 <p>Water: <span id="additionalWater">0</span> g</p>
                 <p>Salt: <span id="saltResultFinal">0</span> g</p>
+                <p>Olive Oil: <span id="oliveOilResultFinal">0</span> g</p>
                 <p><strong>Poolish (from above): <span id="polishStarterFinal">0</span> g</strong></p>
+            </div>
+            
+            <div class="instructions" id="instructions">
+                <h3>Detailed Pizza Dough Instructions</h3>
+                
+                <p class="step-heading">For the Poolish (Day 1):</p>
+                <ol>
+                    <li>Mix <span id="inst-polishWater">0</span>g of cold water with <span id="inst-polishYeast">0</span>g of dry yeast<span id="honey-text"> and <span id="inst-polishHoney">0</span>g of honey (optional)</span> until the yeast is mostly dissolved.</li>
+                    <li>Add <span id="inst-polishFlour">0</span>g of flour and mix thoroughly until well combined.</li>
+                    <li>Let the mixture rest at room temperature for 30 minutes.</li>
+                    <li>Place in the refrigerator for 16-24 hours (the longer the better, but not longer than 24 hours).</li>
+                </ol>
+                
+                <p class="step-heading">For the Final Dough (Day 2):</p>
+                <ol start="5">
+                    <li>Remove the poolish from the refrigerator. Mix the <span id="inst-totalPolish">0</span>g of poolish with <span id="inst-additionalWater">0</span>g of water until somewhat dissolved. It's okay if some clumps or "strings" remain.</li>
+                    <li>Add <span id="inst-saltResultFinal">0</span>g of salt, <span id="inst-freshFlour">0</span>g of flour<span id="olive-oil-text">, and <span id="inst-oliveOilResultFinal">0</span>g of olive oil (optional)</span>. Mix thoroughly to combine all ingredients.</li>
+                    <li>Let the dough rest for 30 minutes.</li>
+                    <li>Knead the dough for about 10 minutes until it becomes smooth and elastic. This step is crucial for developing a nice, smooth dough texture.</li>
+                    <li>Form the dough into a tight ball and place it in a lightly oiled container. Return to the refrigerator for another 16-24 hours.</li>
+                </ol>
+                
+                <p class="step-heading">On Pizza Day (Day 3):</p>
+                <ol start="10">
+                    <li>Take the dough out of the refrigerator 2-3 hours before making pizza and proceed with the next steps.</li>
+                    <li>Divide the dough into <span id="inst-balls">0</span> equal portions (each weighing about <span id="inst-ballWeight">0</span>g) and form them into balls.</li>
+                    <li>Place the dough balls in a floured container, making sure to dust them with flour on top and bottom to prevent sticking. Close the container and let them rest at room temperature.</li>
+                    <li>After 2-3 hours of rest, the pizza balls will be ready to be shaped and baked.</li>
+                </ol>
             </div>
         </div>
     </div>
@@ -177,13 +244,15 @@
             const ballWeight = parseFloat(document.getElementById('ballWeight').value);
             const hydration = parseFloat(document.getElementById('hydration').value) / 100;
             const saltPercentage = parseFloat(document.getElementById('salt').value) / 100;
+            const oliveOilPercentage = parseFloat(document.getElementById('oliveOil').value) / 100;
             const inputType = document.getElementById('percentButton').classList.contains('active') ? 'percent' : 'amount';
 
             let polishPercent, totalPolish;
 
             const totalDough = balls * ballWeight;
-            const totalFlour = totalDough / (1 + hydration + saltPercentage);
+            const totalFlour = totalDough / (1 + hydration + saltPercentage + oliveOilPercentage);
             const totalWater = totalFlour * hydration;
+            const oliveOil = totalFlour * oliveOilPercentage;
 
             if (inputType === 'percent') {
                 polishPercent = parseFloat(document.getElementById('poolishPercent').value) / 100;
@@ -192,6 +261,9 @@
                 totalPolish = parseFloat(document.getElementById('poolishAmount').value);
                 polishPercent = totalPolish / (totalFlour * 2);
             }
+            
+            // Calculate poolish percentage in total dough
+            const poolishPercentInDough = (totalPolish / totalDough) * 100;
 
             let errorMessages = [];
 
@@ -207,11 +279,14 @@
             if (hydration > 1) {
                 errorMessages.push("Hydration cannot exceed 100%.");
             }
-            if (saltPercentage > 0.1) {
-                errorMessages.push("Salt percentage is unusually high (>10%). Please check your input.");
+            if (saltPercentage > 0.05) {
+                errorMessages.push("Salt percentage is unusually high (>5%). Please check your input.");
             }
             if (polishPercent > 1) {
                 errorMessages.push("Poolish percentage cannot exceed 100%.");
+            }
+            if (oliveOilPercentage > 0.03) {
+                errorMessages.push("Olive oil percentage cannot exceed 3%.");
             }
 
             if (errorMessages.length > 0) {
@@ -229,28 +304,52 @@
             const freshFlour = totalFlour - polishFlour;
             const additionalWater = totalWater - polishWater;
 
-            const dryYeast = (totalPolish / 300) * 3;
+            const dryYeast = (totalPolish / 300) * 3 * 0.8;
             const polishYeast = dryYeast;
+            const honey = dryYeast; // Honey equals the amount of dry yeast
+            const polishHoney = polishYeast; // Honey in poolish equals the amount of yeast in poolish
 
             document.getElementById('totalDoughWeight').textContent = Math.round(totalDough);
             document.getElementById('totalFlour').textContent = Math.round(totalFlour);
             document.getElementById('totalWater').textContent = Math.round(totalWater);
             document.getElementById('saltResult').textContent = Math.round(salt);
+            document.getElementById('oliveOilResult').textContent = Math.round(oliveOil);
             document.getElementById('dryYeast').textContent = dryYeast.toFixed(1);
+            document.getElementById('honeyResult').textContent = honey.toFixed(1);
             document.getElementById('polishFlour').textContent = Math.round(polishFlour);
             document.getElementById('polishWater').textContent = Math.round(polishWater);
             document.getElementById('polishYeast').textContent = polishYeast.toFixed(1);
+            document.getElementById('polishHoney').textContent = polishHoney.toFixed(1);
             document.getElementById('totalPolish').textContent = Math.round(totalPolish);
             document.getElementById('freshFlour').textContent = Math.round(freshFlour);
             document.getElementById('additionalWater').textContent = Math.round(additionalWater);
             document.getElementById('saltResultFinal').textContent = Math.round(salt);
+            document.getElementById('oliveOilResultFinal').textContent = Math.round(oliveOil);
             document.getElementById('polishStarterFinal').textContent = Math.round(totalPolish);
+            document.getElementById('poolishPercentInDough').textContent = poolishPercentInDough.toFixed(1);
+            
+            // Update instructions with actual values
+            document.getElementById('inst-polishWater').textContent = Math.round(polishWater);
+            document.getElementById('inst-polishYeast').textContent = polishYeast.toFixed(1);
+            document.getElementById('inst-polishHoney').textContent = polishHoney.toFixed(1);
+            document.getElementById('inst-polishFlour').textContent = Math.round(polishFlour);
+            document.getElementById('inst-totalPolish').textContent = Math.round(totalPolish);
+            document.getElementById('inst-additionalWater').textContent = Math.round(additionalWater);
+            document.getElementById('inst-saltResultFinal').textContent = Math.round(salt);
+            document.getElementById('inst-freshFlour').textContent = Math.round(freshFlour);
+            document.getElementById('inst-oliveOilResultFinal').textContent = Math.round(oliveOil);
+            document.getElementById('inst-balls').textContent = balls;
+            document.getElementById('inst-ballWeight').textContent = Math.round(ballWeight);
+            
+            // Show/hide optional ingredients in instructions
+            document.getElementById('honey-text').style.display = honey > 0 ? 'inline' : 'none';
+            document.getElementById('olive-oil-text').style.display = oliveOil > 0 ? 'inline' : 'none';
 
             updateURL();
         }
 
         function updateURL() {
-            const inputs = ['balls', 'ballWeight', 'hydration', 'salt'];
+            const inputs = ['balls', 'ballWeight', 'hydration', 'salt', 'oliveOil'];
             const url = new URL(window.location.href);
             inputs.forEach(id => {
                 url.searchParams.set(id, document.getElementById(id).value);
@@ -263,7 +362,7 @@
         }
 
         function loadFromUrl() {
-            const inputs = ['balls', 'ballWeight', 'hydration', 'salt', 'poolishPercent', 'poolishAmount'];
+            const inputs = ['balls', 'ballWeight', 'hydration', 'salt', 'oliveOil', 'poolishPercent', 'poolishAmount'];
             const url = new URL(window.location.href);
             inputs.forEach(id => {
                 const value = url.searchParams.get(id);
