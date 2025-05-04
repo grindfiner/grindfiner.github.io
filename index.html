@@ -83,6 +83,10 @@
             min-width: 60px;
         }
 
+        .secondary-info {
+            color: #666;
+        }
+
         .section h3 {
             margin-top: 0;
             margin-bottom: 10px;
@@ -269,12 +273,12 @@
                     <span class="ingredient-amount"><span id="honeyResult">0</span> g</span>
                 </div>
                 <div class="ingredient-container">
-                    <span class="ingredient-title">Poolish Percentage in Dough:</span>
-                    <span class="ingredient-amount"><span id="poolishPercentInDough">0</span>%</span>
-                </div>
-                <div class="ingredient-container">
                     <span class="ingredient-title">Poolish Percentage of Flour:</span>
                     <span class="ingredient-amount"><span id="poolishPercentOfFlour">0</span>%</span>
+                </div>
+                <div class="ingredient-container">
+                    <span class="ingredient-title secondary-info">Poolish Percentage in Dough:</span>
+                    <span class="ingredient-amount secondary-info"><span id="poolishPercentInDough">0</span>%</span>
                 </div>
             </div>
             <div class="section-divider"></div>
@@ -298,7 +302,7 @@
                 </div>
                 <div class="ingredient-container">
                     <span class="ingredient-title"><strong>Total poolish:</strong></span>
-                    <span class="ingredient-amount"><strong><span id="totalPolish">0</span> g</strong></span>
+                    <span class="ingredient-amount"><strong><span id="totalPolish">0</span> g</strong> <span id="totalPolishWithExtras"></span></span>
                 </div>
             </div>
             <div class="section">
@@ -406,8 +410,8 @@
 
             let errorMessages = [];
 
-            if (balls <= 0 || ballWeight <= 0 || hydration <= 0 || saltPercentage <= 0 || polishPercent <= 0) {
-                errorMessages.push("All values must be positive.");
+            if (balls <= 0 || ballWeight <= 0 || hydration <= 0 || saltPercentage < 0 || polishPercent <= 0) {
+                errorMessages.push("All values must be positive (salt can be 0).");
             }
             if (polishPercent > hydration) {
                 errorMessages.push("Poolish percentage cannot exceed hydration percentage.");
@@ -448,8 +452,8 @@
             }
 
             const salt = totalFlour * saltPercentage;
-            const polishFlour = totalPolish / 2;
-            const polishWater = totalPolish / 2;
+            const polishFlour = Math.round(totalPolish / 2);
+            const polishWater = Math.round(totalPolish / 2);
             const freshFlour = totalFlour - polishFlour;
             const additionalWater = totalWater - polishWater;
 
@@ -467,23 +471,24 @@
                 'oliveOilResult': Math.round(oliveOil),
                 'dryYeast': dryYeast.toFixed(1),
                 'honeyResult': honey.toFixed(1),
-                'polishFlour': Math.round(polishFlour),
-                'polishWater': Math.round(polishWater),
+                'polishFlour': polishFlour,
+                'polishWater': polishWater,
                 'polishYeast': polishYeast.toFixed(1),
                 'polishHoney': polishHoney.toFixed(1),
-                'totalPolish': Math.round(totalPolish),
+                'totalPolish': polishFlour + polishWater,
+                'totalPolishWithExtras': `(+ ${polishYeast.toFixed(1)}g yeast + ${polishHoney.toFixed(1)}g honey)`,
                 'freshFlour': Math.round(freshFlour),
                 'additionalWater': Math.round(additionalWater),
                 'saltResultFinal': Math.round(salt),
                 'oliveOilResultFinal': Math.round(oliveOil),
-                'polishStarterFinal': Math.round(totalPolish),
+                'polishStarterFinal': polishFlour + polishWater,
                 'poolishPercentInDough': poolishPercentInDough.toFixed(1),
                 'poolishPercentOfFlour': (polishPercent * 100).toFixed(1),
-                'inst-polishWater': Math.round(polishWater),
+                'inst-polishWater': polishWater,
                 'inst-polishYeast': polishYeast.toFixed(1),
                 'inst-polishHoney': polishHoney.toFixed(1),
-                'inst-polishFlour': Math.round(polishFlour),
-                'inst-totalPolish': Math.round(totalPolish),
+                'inst-polishFlour': polishFlour,
+                'inst-totalPolish': polishFlour + polishWater,
                 'inst-additionalWater': Math.round(additionalWater),
                 'inst-saltResultFinal': Math.round(salt),
                 'inst-freshFlour': Math.round(freshFlour),
