@@ -499,15 +499,22 @@
         }
 
         function loadFromUrl() {
-            const inputs = ['balls', 'ballWeight', 'hydration', 'salt', 'oliveOil', 'poolishPercent', 'poolishAmount'];
             const url = new URL(window.location.href);
+            const inputs = ['balls', 'ballWeight', 'hydration', 'salt', 'oliveOil', 'poolishPercent', 'poolishAmount'];
             inputs.forEach(id => {
                 const value = url.searchParams.get(id);
-                if (value) document.getElementById(id).value = value;
+                if (value !== null) {
+                    const element = document.getElementById(id);
+                    if (element) {
+                        element.value = value;
+                    }
+                }
             });
+
             const poolishType = url.searchParams.get('poolishInputType') || 'amount';
-            const lang = url.searchParams.get('lang') || 'en';
             setPoolishType(poolishType);
+
+            const lang = url.searchParams.get('lang') || 'en';
             setLanguage(lang);
         }
 
@@ -521,8 +528,8 @@
             });
         }
         document.addEventListener('DOMContentLoaded', function () {
-            setPoolishType('amount');
             loadFromUrl();
+            setPoolishType('amount');
             calculate();
         });
 
