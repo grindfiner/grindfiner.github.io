@@ -59,6 +59,15 @@
             margin-top: 10px;
         }
 
+        .warning {
+            color: #856404;
+            background-color: #fff3cd;
+            border: 1px solid #ffeeba;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+
         button {
             background-color: #4CAF50;
             color: white;
@@ -172,6 +181,7 @@
         </div>
         <button onclick="shareOrSave()">Copy recipe to clipboard</button>
         <div id="errorMessages" class="error"></div>
+        <div id="warningMessages" class="warning"></div>
         <div class="results" id="results">
             <div class="section">
                 <h3>Total ingredients</h3>
@@ -183,6 +193,7 @@
                 <p>Dry Yeast: <span id="dryYeast">0</span> g</p>
                 <p>Honey (optional): <span id="honeyResult">0</span> g</p>
                 <p>Poolish Percentage in Dough: <span id="poolishPercentInDough">0</span>%</p>
+                <p>Poolish Percentage of Flour: <span id="poolishPercentOfFlour">0</span>%</p>
             </div>
             <div class="section">
                 <h3>Poolish Ingredients</h3>
@@ -251,7 +262,21 @@
             let polishPercent, totalPolish;
 
             const totalDough = balls * ballWeight;
+            if (totalDough <= 0) {
+                errorMessages.push("Total dough weight must be positive.");
+                document.getElementById('errorMessages').innerHTML = errorMessages.join("<br>");
+                document.getElementById('results').style.display = 'none';
+                return;
+            }
+
             const totalFlour = totalDough / (1 + hydration + saltPercentage + oliveOilPercentage);
+            if (totalFlour <= 0) {
+                errorMessages.push("Invalid input values resulting in zero or negative flour amount.");
+                document.getElementById('errorMessages').innerHTML = errorMessages.join("<br>");
+                document.getElementById('results').style.display = 'none';
+                return;
+            }
+
             const totalWater = totalFlour * hydration;
             const oliveOil = totalFlour * oliveOilPercentage;
 
@@ -288,6 +313,16 @@
             }
             if (oliveOilPercentage > 0.03) {
                 errorMessages.push("Olive oil percentage cannot exceed 3%.");
+            }
+
+            // Add warning for low poolish percentage
+            const warningElement = document.getElementById('warningMessages');
+            if (polishPercent < 0.2) {
+                warningElement.innerHTML = "⚠️ Warning: Poolish percentage is below 20%. This may result in longer fermentation times. Consider increasing the poolish percentage for better results.";
+                warningElement.style.display = 'block';
+            } else {
+                warningElement.innerHTML = '';
+                warningElement.style.display = 'none';
             }
 
             if (errorMessages.length > 0) {
@@ -330,6 +365,7 @@
                 'oliveOilResultFinal': Math.round(oliveOil),
                 'polishStarterFinal': Math.round(totalPolish),
                 'poolishPercentInDough': poolishPercentInDough.toFixed(1),
+                'poolishPercentOfFlour': (polishPercent * 100).toFixed(1),
                 'inst-polishWater': Math.round(polishWater),
                 'inst-polishYeast': polishYeast.toFixed(1),
                 'inst-polishHoney': polishHoney.toFixed(1),
@@ -390,12 +426,28 @@
 
         function shareOrSave() {
             const url = window.location.href;
-            navigator.clipboard.writeText(url).then(() => {
-                alert('URL copied to clipboard!');
-            }).catch(err => {
-                console.error('Failed to copy URL: ', err);
-                alert('Failed to copy URL. Please copy it manually:\n\n' + url);
-            });
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(url).then(() => {
+                    alert('URL copied to clipboard!');
+                }).catch(err => {
+                    console.error('Failed to copy URL: ', err);
+                    alert('Failed to copy URL. Please copy it manually:\n\n' + url);
+                });
+            } else {
+                // Fallback for non-secure contexts or browsers without clipboard API
+                const textArea = document.createElement('textarea');
+                textArea.value = url;
+                document.body.appendChild(textArea);
+                textArea.select();
+                try {
+                    document.execCommand('copy');
+                    alert('URL copied to clipboard!');
+                } catch (err) {
+                    console.error('Failed to copy URL: ', err);
+                    alert('Failed to copy URL. Please copy it manually:\n\n' + url);
+                }
+                document.body.removeChild(textArea);
+            }
         }
         document.addEventListener('DOMContentLoaded', function () {
             loadFromUrl();
