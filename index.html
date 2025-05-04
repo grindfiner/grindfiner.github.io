@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title data-i18n="title">Poolish Pizza Dough Calculator</title>
+    <title>Poolish Pizza Dough Calculator</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -127,285 +127,111 @@
             margin-top: 20px;
             margin-bottom: 10px;
         }
-
-        .language-selector {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            display: flex;
-            gap: 10px;
-        }
-
-        .language-btn {
-            background-color: #f0f0f0;
-            border: 1px solid #ccc;
-            padding: 5px 10px;
-            cursor: pointer;
-            border-radius: 5px;
-            transition: background-color 0.3s;
-            color: black;
-        }
-
-        .language-btn.active {
-            background-color: #4CAF50;
-            color: white;
-        }
     </style>
 </head>
 
 <body>
     <div class="calculator">
-        <div class="language-selector">
-            <button class="language-btn active" onclick="setLanguage('en')">EN</button>
-            <button class="language-btn" onclick="setLanguage('de')">DE</button>
-        </div>
-        <h2 data-i18n="title">Poolish Pizza Dough Calculator</h2>
+        <h2>Poolish Pizza Dough Calculator</h2>
         <div class="input-group">
-            <label data-i18n="numberOfBalls">Number of pizza balls:</label>
+            <label>Number of pizza balls:</label>
             <input type="number" id="balls" value="4" min="1">
         </div>
         <div class="input-group">
-            <label data-i18n="weightPerBall">Weight per ball (grams):</label>
+            <label>Weight per ball (grams):</label>
             <input type="number" id="ballWeight" value="200" min="1">
         </div>
         <div class="input-group">
-            <label data-i18n="hydration">Hydration (%):</label>
+            <label>Hydration (%):</label>
             <input type="number" id="hydration" value="65" step="2.5" min="0">
         </div>
         <div class="input-group">
-            <label data-i18n="salt">Salt (%):</label>
+            <label>Salt (%):</label>
             <input type="number" id="salt" value="2.5" step="0.1" min="0">
         </div>
         <div class="input-group">
-            <label data-i18n="oliveOil">Olive Oil (%):</label>
+            <label>Olive Oil (%):</label>
             <input type="number" id="oliveOil" value="2" step="0.1" min="0" max="3">
         </div>
         <div class="input-group">
-            <label data-i18n="poolishInputType">Poolish input type:</label>
+            <label>Poolish input type:</label>
             <div class="button-group">
-                <button id="percentButton" class="poolish-type-btn" onclick="setPoolishType('percent')" data-i18n="percentage">Percentage</button>
-                <button id="amountButton" class="poolish-type-btn active" onclick="setPoolishType('amount')" data-i18n="amount">Amount</button>
+                <button id="percentButton" class="poolish-type-btn"
+                    onclick="setPoolishType('percent')">Percentage</button>
+                <button id="amountButton" class="poolish-type-btn active"
+                    onclick="setPoolishType('amount')">Amount</button>
             </div>
         </div>
         <div class="input-group" id="poolishPercentGroup" style="display:none;">
-            <label data-i18n="poolishPercentage">Poolish percentage (%):</label>
+            <label>Poolish percentage (%):</label>
             <input type="number" id="poolishPercent" value="30" step="1" min="0">
         </div>
         <div class="input-group" id="poolishAmountGroup">
-            <label data-i18n="poolishAmount">Poolish amount (g):</label>
+            <label>Poolish amount (g):</label>
             <input type="number" id="poolishAmount" value="300" step="1" min="0">
         </div>
-        <button onclick="shareOrSave()" data-i18n="copyRecipe">Copy recipe to clipboard</button>
+        <button onclick="shareOrSave()">Copy recipe to clipboard</button>
         <div id="errorMessages" class="error"></div>
         <div class="results" id="results">
             <div class="section">
-                <h3 data-i18n="totalIngredients">Total ingredients</h3>
-                <p data-i18n="dough">Dough: <span id="totalDoughWeight">0</span></p>
-                <p data-i18n="flour">Flour: <span id="totalFlour">0</span></p>
-                <p data-i18n="water">Water: <span id="totalWater">0</span></p>
-                <p data-i18n="salt">Salt: <span id="saltResult">0</span></p>
-                <p data-i18n="oliveOil">Olive Oil: <span id="oliveOilResult">0</span></p>
-                <p data-i18n="dryYeast">Dry Yeast: <span id="dryYeast">0</span></p>
-                <p data-i18n="honey">Honey (optional): <span id="honeyResult">0</span></p>
-                <p data-i18n="poolishPercentageInDough">Poolish Percentage in Dough: <span id="poolishPercentInDough">0</span></p>
+                <h3>Total ingredients</h3>
+                <p>Dough: <span id="totalDoughWeight">0</span> g</p>
+                <p>Flour: <span id="totalFlour">0</span> g</p>
+                <p>Water: <span id="totalWater">0</span> g</p>
+                <p>Salt: <span id="saltResult">0</span> g</p>
+                <p>Olive Oil: <span id="oliveOilResult">0</span> g</p>
+                <p>Dry Yeast: <span id="dryYeast">0</span> g</p>
+                <p>Honey (optional): <span id="honeyResult">0</span> g</p>
+                <p>Poolish Percentage in Dough: <span id="poolishPercentInDough">0</span>%</p>
             </div>
             <div class="section">
-                <h3 data-i18n="poolishIngredients">Poolish Ingredients</h3>
-                <p data-i18n="flour">Flour: <span id="polishFlour">0</span></p>
-                <p data-i18n="water">Water: <span id="polishWater">0</span></p>
-                <p data-i18n="dryYeast">Dry Yeast: <span id="polishYeast">0</span></p>
-                <p data-i18n="honey">Honey (optional): <span id="polishHoney">0</span></p>
-                <p><strong data-i18n="totalPoolish">Total poolish: <span id="totalPolish">0</span></strong></p>
+                <h3>Poolish Ingredients</h3>
+                <p>Flour: <span id="polishFlour">0</span> g</p>
+                <p>Water: <span id="polishWater">0</span> g</p>
+                <p>Dry Yeast: <span id="polishYeast">0</span> g</p>
+                <p>Honey (optional): <span id="polishHoney">0</span> g</p>
+                <p><strong>Total poolish: <span id="totalPolish">0</span> g</strong></p>
             </div>
             <div class="section">
-                <h3 data-i18n="finalDoughIngredients">Final Dough Ingredients</h3>
-                <p data-i18n="flour">Flour: <span id="freshFlour">0</span></p>
-                <p data-i18n="water">Water: <span id="additionalWater">0</span></p>
-                <p data-i18n="salt">Salt: <span id="saltResultFinal">0</span></p>
-                <p data-i18n="oliveOil">Olive Oil: <span id="oliveOilResultFinal">0</span></p>
-                <p><strong data-i18n="poolishFromAbove">Poolish (from above): <span id="polishStarterFinal">0</span></strong></p>
+                <h3>Final Dough Ingredients</h3>
+                <p>Flour: <span id="freshFlour">0</span> g</p>
+                <p>Water: <span id="additionalWater">0</span> g</p>
+                <p>Salt: <span id="saltResultFinal">0</span> g</p>
+                <p>Olive Oil: <span id="oliveOilResultFinal">0</span> g</p>
+                <p><strong>Poolish (from above): <span id="polishStarterFinal">0</span> g</strong></p>
             </div>
             
             <div class="instructions" id="instructions">
-                <h3 data-i18n="detailedInstructions">Detailed Pizza Dough Instructions</h3>
+                <h3>Detailed Pizza Dough Instructions</h3>
                 
-                <p class="step-heading" data-i18n="poolishDay1">For the Poolish (Day 1):</p>
+                <p class="step-heading">For the Poolish (Day 1):</p>
                 <ol>
-                    <li data-i18n="step1">Mix {water}g of cold water with {yeast}g of dry yeast{optional} until the yeast is mostly dissolved.</li>
-                    <li data-i18n="step2">Add {flour}g of flour and mix thoroughly until well combined.</li>
-                    <li data-i18n="step3">Let the mixture rest at room temperature for 30 minutes.</li>
-                    <li data-i18n="step4">Place in the refrigerator for 16-24 hours (the longer the better, but not longer than 24 hours).</li>
+                    <li>Mix <span id="inst-polishWater">0</span>g of cold water with <span id="inst-polishYeast">0</span>g of dry yeast<span id="honey-text"> and <span id="inst-polishHoney">0</span>g of honey (optional)</span> until the yeast is mostly dissolved.</li>
+                    <li>Add <span id="inst-polishFlour">0</span>g of flour and mix thoroughly until well combined.</li>
+                    <li>Let the mixture rest at room temperature for 30 minutes.</li>
+                    <li>Place in the refrigerator for 16-24 hours (the longer the better, but not longer than 24 hours).</li>
                 </ol>
                 
-                <p class="step-heading" data-i18n="finalDoughDay2">For the Final Dough (Day 2):</p>
+                <p class="step-heading">For the Final Dough (Day 2):</p>
                 <ol start="5">
-                    <li data-i18n="step5">Remove the poolish from the refrigerator. Mix the {poolish}g of poolish with {water}g of water until somewhat dissolved. It's okay if some clumps or \"strings\" remain.</li>
-                    <li data-i18n="step6">Add {salt}g of salt, {flour}g of flour{optional}. Mix thoroughly to combine all ingredients.</li>
-                    <li data-i18n="step7">Let the dough rest for 30 minutes.</li>
-                    <li data-i18n="step8">Knead the dough for about 10 minutes until it becomes smooth and elastic. This step is crucial for developing a nice, smooth dough texture.</li>
-                    <li data-i18n="step9">Form the dough into a tight ball and place it in a lightly oiled container. Return to the refrigerator for another 16-24 hours.</li>
+                    <li>Remove the poolish from the refrigerator. Mix the <span id="inst-totalPolish">0</span>g of poolish with <span id="inst-additionalWater">0</span>g of water until somewhat dissolved. It's okay if some clumps or "strings" remain.</li>
+                    <li>Add <span id="inst-saltResultFinal">0</span>g of salt, <span id="inst-freshFlour">0</span>g of flour<span id="olive-oil-text">, and <span id="inst-oliveOilResultFinal">0</span>g of olive oil (optional)</span>. Mix thoroughly to combine all ingredients.</li>
+                    <li>Let the dough rest for 30 minutes.</li>
+                    <li>Knead the dough for about 10 minutes until it becomes smooth and elastic. This step is crucial for developing a nice, smooth dough texture.</li>
+                    <li>Form the dough into a tight ball and place it in a lightly oiled container. Return to the refrigerator for another 16-24 hours.</li>
                 </ol>
                 
-                <p class="step-heading" data-i18n="pizzaDay3">On Pizza Day (Day 3):</p>
+                <p class="step-heading">On Pizza Day (Day 3):</p>
                 <ol start="10">
-                    <li data-i18n="step10">Take the dough out of the refrigerator 2-3 hours before making pizza and proceed with the next steps.</li>
-                    <li data-i18n="step11">Divide the dough into {balls} equal portions (each weighing about {weight}g) and form them into balls.</li>
-                    <li data-i18n="step12">Place the dough balls in a floured container, making sure to dust them with flour on top and bottom to prevent sticking. Close the container and let them rest at room temperature.</li>
-                    <li data-i18n="step13">After 2-3 hours of rest, the pizza balls will be ready to be shaped and baked.</li>
+                    <li>Take the dough out of the refrigerator 2-3 hours before making pizza and proceed with the next steps.</li>
+                    <li>Divide the dough into <span id="inst-balls">0</span> equal portions (each weighing about <span id="inst-ballWeight">0</span>g) and form them into balls.</li>
+                    <li>Place the dough balls in a floured container, making sure to dust them with flour on top and bottom to prevent sticking. Close the container and let them rest at room temperature.</li>
+                    <li>After 2-3 hours of rest, the pizza balls will be ready to be shaped and baked.</li>
                 </ol>
             </div>
         </div>
     </div>
     <script>
-        const translations = {
-            en: {
-                title: "Poolish Pizza Dough Calculator",
-                numberOfBalls: "Number of pizza balls:",
-                weightPerBall: "Weight per ball (grams):",
-                hydration: "Hydration (%):",
-                salt: "Salt (%): ",
-                oliveOil: "Olive Oil (%):",
-                poolishInputType: "Poolish input type:",
-                percentage: "Percentage",
-                amount: "Amount",
-                poolishPercentage: "Poolish percentage (%):",
-                poolishAmount: "Poolish amount (g):",
-                copyRecipe: "Copy recipe to clipboard",
-                totalIngredients: "Total ingredients",
-                dough: "Total dough: {value}g",
-                flour: "Total flour: {value}g",
-                water: "Total water: {value}g",
-                salt: "Total salt: {value}g",
-                oliveOil: "Total olive oil: {value}g",
-                dryYeast: "Total dry yeast: {value}g",
-                honey: "Total honey (optional): {value}g",
-                poolishPercentageInDough: "Poolish Percentage in Dough: {value}%",
-                poolishIngredients: "Poolish Ingredients",
-                totalPoolish: "Total poolish: {value}g",
-                finalDoughIngredients: "Final Dough Ingredients",
-                poolishFromAbove: "Poolish (from above): {value}g",
-                detailedInstructions: "Detailed Pizza Dough Instructions",
-                poolishDay1: "For the Poolish (Day 1):",
-                step1: "Mix {water}g of cold water with {yeast}g of dry yeast{optional} until the yeast is mostly dissolved.",
-                step2: "Add {flour}g of flour and mix thoroughly until well combined.",
-                step3: "Let the mixture rest at room temperature for 30 minutes.",
-                step4: "Place in the refrigerator for 16-24 hours (the longer the better, but not longer than 24 hours).",
-                finalDoughDay2: "For the Final Dough (Day 2):",
-                step5: "Remove the poolish from the refrigerator. Mix the {poolish}g of poolish with {water}g of water until somewhat dissolved. It's okay if some clumps or \"strings\" remain.",
-                step6: "Add {salt}g of salt, {flour}g of flour{optional}. Mix thoroughly to combine all ingredients.",
-                step7: "Let the dough rest for 30 minutes.",
-                step8: "Knead the dough for about 10 minutes until it becomes smooth and elastic. This step is crucial for developing a nice, smooth dough texture.",
-                step9: "Form the dough into a tight ball and place it in a lightly oiled container. Return to the refrigerator for another 16-24 hours.",
-                pizzaDay3: "On Pizza Day (Day 3):",
-                step10: "Take the dough out of the refrigerator 2-3 hours before making pizza and proceed with the next steps.",
-                step11: "Divide the dough into {balls} equal portions (each weighing about {weight}g) and form them into balls.",
-                step12: "Place the dough balls in a floured container, making sure to dust them with flour on top and bottom to prevent sticking. Close the container and let them rest at room temperature.",
-                step13: "After 2-3 hours of rest, the pizza balls will be ready to be shaped and baked."
-            },
-            de: {
-                title: "Poolish Pizza-Teig Rechner",
-                numberOfBalls: "Anzahl der Teigkugeln:",
-                weightPerBall: "Gewicht pro Kugel (Gramm):",
-                hydration: "Hydration (%):",
-                salt: "Salz (%): ",
-                oliveOil: "Olivenöl (%):",
-                poolishInputType: "Poolish Eingabetyp:",
-                percentage: "Prozentsatz",
-                amount: "Menge",
-                poolishPercentage: "Poolish Prozentsatz (%):",
-                poolishAmount: "Poolish Menge (g):",
-                copyRecipe: "Rezept in Zwischenablage kopieren",
-                totalIngredients: "Gesamtzutaten",
-                dough: "Gesamtteig: {value}g",
-                flour: "Mehl: {value}g",
-                water: "Wasser: {value}g",
-                salt: "Salz: {value}g",
-                oliveOil: "Olivenöl: {value}g",
-                dryYeast: "Trockenhefe: {value}g",
-                honey: "Honig (optional): {value}g",
-                poolishPercentageInDough: "Poolish-Prozentsatz im Teig: {value}%",
-                poolishIngredients: "Poolish Zutaten",
-                totalPoolish: "Gesamtpoolish: {value}g",
-                finalDoughIngredients: "Endgültige Teigzutaten",
-                poolishFromAbove: "Poolish (von oben): {value}g",
-                detailedInstructions: "Detaillierte Pizza-Teig Anleitung",
-                poolishDay1: "Für den Poolish (Tag 1):",
-                step1: "Mischen Sie {water}g kaltes Wasser mit {yeast}g Trockenhefe{optional} bis die Hefe größtenteils aufgelöst ist.",
-                step2: "Fügen Sie {flour}g Mehl hinzu und mischen Sie gründlich, bis alles gut vermischt ist.",
-                step3: "Lassen Sie die Mischung 30 Minuten bei Raumtemperatur ruhen.",
-                step4: "Stellen Sie die Mischung für 16-24 Stunden in den Kühlschrank (je länger, desto besser, aber nicht länger als 24 Stunden).",
-                finalDoughDay2: "Für den Endgültigen Teig (Tag 2):",
-                step5: "Nehmen Sie den Poolish aus dem Kühlschrank. Mischen Sie die {poolish}g Poolish mit {water}g Wasser, bis es sich etwas auflöst. Es ist in Ordnung, wenn einige Klumpen oder \"Fäden\" übrig bleiben.",
-                step6: "Fügen Sie {salt}g Salz, {flour}g Mehl{optional} hinzu. Mischen Sie gründlich, um alle Zutaten zu kombinieren.",
-                step7: "Lassen Sie den Teig 30 Minuten ruhen.",
-                step8: "Kneten Sie den Teig etwa 10 Minuten lang, bis er glatt und elastisch wird. Dieser Schritt ist entscheidend für die Entwicklung einer schönen, glatten Teigtextur.",
-                step9: "Formen Sie den Teig zu einer festen Kugel und legen Sie ihn in einen leicht geölten Behälter. Zurück in den Kühlschrank für weitere 16-24 Stunden.",
-                pizzaDay3: "Am Pizza-Tag (Tag 3):",
-                step10: "Nehmen Sie den Teig 2-3 Stunden vor dem Pizzabacken aus dem Kühlschrank und fahren Sie mit den nächsten Schritten fort.",
-                step11: "Teilen Sie den Teig in {balls} gleiche Portionen (jeweils etwa {weight}g) und formen Sie sie zu Kugeln.",
-                step12: "Legen Sie die Teigkugeln in einen gemehlten Behälter, achten Sie darauf, sie oben und unten mit Mehl zu bestäuben, um ein Anhaften zu verhindern. Schließen Sie den Behälter und lassen Sie sie bei Raumtemperatur ruhen.",
-                step13: "Nach 2-3 Stunden Ruhezeit sind die Teigkugeln bereit zum Formen und Backen."
-            }
-        };
-
-        let currentLanguage = 'en';
-
-        function setLanguage(lang) {
-            currentLanguage = lang;
-            document.documentElement.lang = lang;
-            document.querySelectorAll('.language-btn').forEach(btn => {
-                btn.classList.toggle('active', btn.textContent.toLowerCase() === lang);
-            });
-            updateTranslations();
-            updateURL();
-        }
-
-        function updateTranslations() {
-            document.querySelectorAll('[data-i18n]').forEach(element => {
-                const key = element.getAttribute('data-i18n');
-                if (translations[currentLanguage][key]) {
-                    if (element.tagName === 'INPUT' || element.tagName === 'BUTTON') {
-                        element.value = translations[currentLanguage][key];
-                    } else {
-                        // Check if the element has a span child (for dynamic values)
-                        const span = element.querySelector('span');
-                        if (span) {
-                            // Keep the span content and only translate the text before and after it
-                            const text = translations[currentLanguage][key];
-                            const parts = text.split('{');
-                            if (parts.length > 1) {
-                                element.innerHTML = parts[0] + span.outerHTML + parts[1].split('}')[1];
-                            } else {
-                                element.innerHTML = text;
-                            }
-                        } else {
-                            // Handle instruction steps with multiple dynamic values
-                            let text = translations[currentLanguage][key];
-                            if (key.startsWith('step')) {
-                                // Replace all dynamic values in the text
-                                const replacements = {
-                                    '{water}': document.getElementById('inst-polishWater')?.textContent || '0',
-                                    '{yeast}': document.getElementById('inst-polishYeast')?.textContent || '0',
-                                    '{flour}': document.getElementById('inst-polishFlour')?.textContent || '0',
-                                    '{poolish}': document.getElementById('inst-totalPolish')?.textContent || '0',
-                                    '{salt}': document.getElementById('inst-saltResultFinal')?.textContent || '0',
-                                    '{balls}': document.getElementById('inst-balls')?.textContent || '0',
-                                    '{weight}': document.getElementById('inst-ballWeight')?.textContent || '0',
-                                    '{optional}': document.getElementById('honey-text')?.style.display === 'none' ? '' : 
-                                        ` und ${document.getElementById('inst-polishHoney')?.textContent || '0'}g Honig (optional)`
-                                };
-                                
-                                Object.entries(replacements).forEach(([placeholder, value]) => {
-                                    text = text.replace(placeholder, value);
-                                });
-                            }
-                            element.textContent = text;
-                        }
-                    }
-                }
-            });
-        }
-
         function setPoolishType(type) {
             document.getElementById('percentButton').classList.toggle('active', type === 'percent');
             document.getElementById('amountButton').classList.toggle('active', type === 'amount');
@@ -542,7 +368,6 @@
             url.searchParams.set('poolishInputType', inputType);
             url.searchParams.set(inputType === 'percent' ? 'poolishPercent' : 'poolishAmount',
                 document.getElementById(inputType === 'percent' ? 'poolishPercent' : 'poolishAmount').value);
-            url.searchParams.set('lang', currentLanguage);
             history.replaceState(null, '', url);
         }
 
@@ -561,9 +386,6 @@
 
             const poolishType = url.searchParams.get('poolishInputType') || 'amount';
             setPoolishType(poolishType);
-
-            const lang = url.searchParams.get('lang') || 'en';
-            setLanguage(lang);
         }
 
         function shareOrSave() {
