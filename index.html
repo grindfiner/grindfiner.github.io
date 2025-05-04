@@ -219,22 +219,22 @@
         </div>
         <div class="input-group">
             <label>Olive Oil (%):</label>
-            <input type="number" id="oliveOil" value="2" step="0.1" min="0" max="3">
+            <input type="number" id="oliveOil" value="2" step="0.1" min="0" max="10">
         </div>
         <div class="input-group">
             <label>Poolish input type:</label>
             <div class="button-group">
-                <button id="percentButton" class="poolish-type-btn"
+                <button id="percentButton" class="poolish-type-btn active"
                     onclick="setPoolishType('percent')">Percentage</button>
-                <button id="amountButton" class="poolish-type-btn active"
+                <button id="amountButton" class="poolish-type-btn"
                     onclick="setPoolishType('amount')">Amount</button>
             </div>
         </div>
-        <div class="input-group" id="poolishPercentGroup" style="display:none;">
+        <div class="input-group" id="poolishPercentGroup">
             <label>Poolish percentage (%):</label>
             <input type="number" id="poolishPercent" value="30" step="1" min="0">
         </div>
-        <div class="input-group" id="poolishAmountGroup">
+        <div class="input-group" id="poolishAmountGroup" style="display:none;">
             <label>Poolish amount (g):</label>
             <input type="number" id="poolishAmount" value="300" step="1" min="0">
         </div>
@@ -342,7 +342,7 @@
                 
                 <p class="step-heading">For the Final Dough (Day 2):</p>
                 <ol start="5">
-                    <li>Remove the poolish from the refrigerator. Mix the <strong><span id="inst-totalPolish">0</span>g</strong> of <strong>poolish</strong> with <strong><span id="inst-additionalWater">0</span>g</strong> of <strong>water</strong> until somewhat dissolved. It's okay if some clumps or "strings" remain.</li>
+                    <li>Remove the poolish from the refrigerator. Mix all of the <strong>poolish</strong> (<strong><span id="inst-totalPolish">0</span>g</strong>) with <strong><span id="inst-additionalWater">0</span>g</strong> of <strong>water</strong> until somewhat dissolved. It's okay if some clumps or "strings" remain.</li>
                     <li>Add <strong><span id="inst-saltResultFinal">0</span>g</strong> of <strong>salt</strong>, mix until most of the salt is dissolved, then add <strong><span id="inst-freshFlour">0</span>g</strong> of <strong>flour</strong><span id="olive-oil-text">, and <strong><span id="inst-oliveOilResultFinal">0</span>g</strong> of <strong>olive oil</strong> (optional)</span>. Mix thoroughly to combine all ingredients.</li>
                     <li>Let the dough rest for 30 minutes.</li>
                     <li>Knead the dough for about 10 minutes until it becomes smooth and elastic. This step is crucial for developing a nice, smooth dough texture.</li>
@@ -409,6 +409,7 @@
             const poolishPercentInDough = (totalPolish / totalDough) * 100;
 
             let errorMessages = [];
+            let warningMessages = [];
 
             if (balls <= 0 || ballWeight <= 0 || hydration <= 0 || saltPercentage < 0 || polishPercent <= 0) {
                 errorMessages.push("All values must be positive (salt can be 0).");
@@ -417,29 +418,24 @@
                 errorMessages.push("Poolish percentage cannot exceed hydration percentage.");
             }
             if (totalDough > 2500) {
-                errorMessages.push("Total dough weight cannot exceed 2500g.");
+                warningMessages.push("Total dough weight exceeds 2500g. This might be too much for most home ovens.");
             }
             if (hydration > 1) {
                 errorMessages.push("Hydration cannot exceed 100%.");
             }
             if (saltPercentage > 0.05) {
-                errorMessages.push("Salt percentage is unusually high (>5%). Please check your input.");
+                warningMessages.push("Salt percentage is unusually high (>5%). Please check your input.");
             }
             if (polishPercent > 1) {
                 errorMessages.push("Poolish percentage cannot exceed 100%.");
             }
             if (oliveOilPercentage > 0.03) {
-                errorMessages.push("Olive oil percentage cannot exceed 3%.");
+                warningMessages.push("Olive oil percentage exceeds 3%. This might affect the dough's texture.");
             }
 
             // Add warning for low poolish percentage
-            const warningElement = document.getElementById('warningMessages');
             if (polishPercent < 0.2) {
-                warningElement.innerHTML = "⚠️ Warning: Poolish percentage is below 20%. This may result in longer fermentation times. Consider increasing the poolish percentage for better results.";
-                warningElement.style.display = 'block';
-            } else {
-                warningElement.innerHTML = '';
-                warningElement.style.display = 'none';
+                warningMessages.push("Poolish percentage is below 20%. This may result in longer fermentation times. Consider increasing the poolish percentage for better results.");
             }
 
             if (errorMessages.length > 0) {
@@ -449,6 +445,16 @@
             } else {
                 document.getElementById('errorMessages').innerHTML = "";
                 document.getElementById('results').style.display = 'block';
+            }
+
+            // Display warnings if any
+            const warningElement = document.getElementById('warningMessages');
+            if (warningMessages.length > 0) {
+                warningElement.innerHTML = warningMessages.join("<br>");
+                warningElement.style.display = 'block';
+            } else {
+                warningElement.innerHTML = '';
+                warningElement.style.display = 'none';
             }
 
             const salt = totalFlour * saltPercentage;
@@ -569,7 +575,7 @@
         }
         document.addEventListener('DOMContentLoaded', function () {
             loadFromUrl();
-            setPoolishType('amount');
+            setPoolishType('percent');
             calculate();
         });
 
