@@ -59,6 +59,30 @@
             border-radius: 5px;
         }
 
+        .section-divider {
+            height: 1px;
+            background-color: #ccc;
+            margin: 20px 0;
+        }
+
+        .ingredient-container {
+            display: flex;
+            justify-content: flex-start;
+            width: 100%;
+            margin-bottom: 5px;
+        }
+
+        .ingredient-title {
+            text-align: right;
+            min-width: 120px;
+            padding-right: 4px;
+        }
+
+        .ingredient-amount {
+            text-align: left;
+            min-width: 60px;
+        }
+
         .section h3 {
             margin-top: 0;
             margin-bottom: 10px;
@@ -216,31 +240,89 @@
         <div class="results" id="results">
             <div class="section">
                 <h3>Total ingredients</h3>
-                <p>Dough: <span id="totalDoughWeight">0</span> g</p>
-                <p>Flour: <span id="totalFlour">0</span> g</p>
-                <p>Water: <span id="totalWater">0</span> g</p>
-                <p>Salt: <span id="saltResult">0</span> g</p>
-                <p>Olive Oil: <span id="oliveOilResult">0</span> g</p>
-                <p>Dry Yeast: <span id="dryYeast">0</span> g</p>
-                <p>Honey (optional): <span id="honeyResult">0</span> g</p>
-                <p>Poolish Percentage in Dough: <span id="poolishPercentInDough">0</span>%</p>
-                <p>Poolish Percentage of Flour: <span id="poolishPercentOfFlour">0</span>%</p>
+                <div class="ingredient-container">
+                    <span class="ingredient-title">Dough:</span>
+                    <span class="ingredient-amount"><span id="totalDoughWeight">0</span> g</span>
+                </div>
+                <div class="ingredient-container">
+                    <span class="ingredient-title">Flour:</span>
+                    <span class="ingredient-amount"><span id="totalFlour">0</span> g</span>
+                </div>
+                <div class="ingredient-container">
+                    <span class="ingredient-title">Water:</span>
+                    <span class="ingredient-amount"><span id="totalWater">0</span> g</span>
+                </div>
+                <div class="ingredient-container">
+                    <span class="ingredient-title">Salt:</span>
+                    <span class="ingredient-amount"><span id="saltResult">0</span> g</span>
+                </div>
+                <div class="ingredient-container">
+                    <span class="ingredient-title">Olive Oil:</span>
+                    <span class="ingredient-amount"><span id="oliveOilResult">0</span> g</span>
+                </div>
+                <div class="ingredient-container">
+                    <span class="ingredient-title">Dry Yeast:</span>
+                    <span class="ingredient-amount"><span id="dryYeast">0</span> g</span>
+                </div>
+                <div class="ingredient-container">
+                    <span class="ingredient-title">Honey (optional):</span>
+                    <span class="ingredient-amount"><span id="honeyResult">0</span> g</span>
+                </div>
+                <div class="ingredient-container">
+                    <span class="ingredient-title">Poolish Percentage in Dough:</span>
+                    <span class="ingredient-amount"><span id="poolishPercentInDough">0</span>%</span>
+                </div>
+                <div class="ingredient-container">
+                    <span class="ingredient-title">Poolish Percentage of Flour:</span>
+                    <span class="ingredient-amount"><span id="poolishPercentOfFlour">0</span>%</span>
+                </div>
             </div>
+            <div class="section-divider"></div>
             <div class="section">
                 <h3>Poolish Ingredients</h3>
-                <p>Flour: <span id="polishFlour">0</span> g</p>
-                <p>Water: <span id="polishWater">0</span> g</p>
-                <p>Dry Yeast: <span id="polishYeast">0</span> g</p>
-                <p>Honey (optional): <span id="polishHoney">0</span> g</p>
-                <p><strong>Total poolish: <span id="totalPolish">0</span> g</strong></p>
+                <div class="ingredient-container">
+                    <span class="ingredient-title">Flour:</span>
+                    <span class="ingredient-amount"><span id="polishFlour">0</span> g</span>
+                </div>
+                <div class="ingredient-container">
+                    <span class="ingredient-title">Water:</span>
+                    <span class="ingredient-amount"><span id="polishWater">0</span> g</span>
+                </div>
+                <div class="ingredient-container">
+                    <span class="ingredient-title">Dry Yeast:</span>
+                    <span class="ingredient-amount"><span id="polishYeast">0</span> g</span>
+                </div>
+                <div class="ingredient-container">
+                    <span class="ingredient-title">Honey (optional):</span>
+                    <span class="ingredient-amount"><span id="polishHoney">0</span> g</span>
+                </div>
+                <div class="ingredient-container">
+                    <span class="ingredient-title"><strong>Total poolish:</strong></span>
+                    <span class="ingredient-amount"><strong><span id="totalPolish">0</span> g</strong></span>
+                </div>
             </div>
             <div class="section">
                 <h3>Final Dough Ingredients</h3>
-                <p>Flour: <span id="freshFlour">0</span> g</p>
-                <p>Water: <span id="additionalWater">0</span> g</p>
-                <p>Salt: <span id="saltResultFinal">0</span> g</p>
-                <p>Olive Oil: <span id="oliveOilResultFinal">0</span> g</p>
-                <p><strong>Poolish (from above): <span id="polishStarterFinal">0</span> g</strong></p>
+                <div class="ingredient-container">
+                    <span class="ingredient-title">Pre-made poolish:</span>
+                    <span class="ingredient-amount"><span id="polishStarterFinal">0</span> g</span>
+                </div>
+                <div class="ingredient-container">
+                    <span class="ingredient-title">Flour:</span>
+                    <span class="ingredient-amount"><span id="freshFlour">0</span> g</span>
+                </div>
+                <div class="ingredient-container">
+                    <span class="ingredient-title">Water:</span>
+                    <span class="ingredient-amount"><span id="additionalWater">0</span> g</span>
+                </div>
+                <div class="ingredient-container">
+                    <span class="ingredient-title">Salt:</span>
+                    <span class="ingredient-amount"><span id="saltResultFinal">0</span> g</span>
+                </div>
+                <div class="ingredient-container">
+                    <span class="ingredient-title">Olive Oil:</span>
+                    <span class="ingredient-amount"><span id="oliveOilResultFinal">0</span> g</span>
+                </div>
             </div>
             
             <div class="instructions" id="instructions">
